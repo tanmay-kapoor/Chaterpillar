@@ -8,7 +8,6 @@ const socket = io();
 socket.emit("joinRoom", {room, url: document.URL});
 
 socket.on("roomUsers", ({ room, users }) => {
-    console.log("forEach possible???", users);
     updateSideBar(room, users);
 });
 
