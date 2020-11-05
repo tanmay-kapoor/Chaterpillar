@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/index.css">
+    <title>Login</title>
+</head>
+<body>
+    <div class="title">
+        <p>Chaterpillar</p>
+    </div>
+
+    <% if(messages.error) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= messages.error %>
+        </div>
+    <% } %>
+
+    <!-- <% if(failure) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= msg %>
+        </div>
+    <% } %> -->
+
+    <% if(created) { %>
+        <div class="alert alert-success" role="alert">
+            <%= msg %>
+        </div>
+    <% } %>
+
+    <form action="/login" method="POST">
+        <div class="form">
+            <div class="form-header">
+                <h1>Login here!</h1>
+            </div>
+            <div class="form-details">
+                <div class="wrapper">
+                    <div class="txtb">
+                        <input name="username" type="text" placeholder="Enter username" required>
+                    </div>
+        
+                    <div class="txtb">
+                        <input id="password" name="password" type="password" placeholder="Enter password" required>    
+                    </div>
+
+                    <div class="show-password">
+                        <input type="checkbox" id="password-checkbox" name="password-checkbox" value="invisible">
+                        <label for="password-checkbox"> Show password</label><br>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-outline-light btn-lg btn-block join-btn">Submit</button>
+                </div>
+
+            </div>
+            <p class="bottom-txt">Don't have an account? <a class="bottom-href" href="/signup">SignUp</a></p>
+        </div>
+    </form>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="js/index.js"></script>
+</body>
+</html>

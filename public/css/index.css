@@ -1,0 +1,124 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-image: url("../background.jpg");
+}
+
+.title {
+    margin-top: 10px;
+    color: white;
+    text-align: center;
+    font-family: 'Sacramento', cursive;
+    font-size: 5rem;
+}
+
+.alert {
+    width: 27%;
+    margin: 0 auto 30px;
+    text-align: center;
+}
+
+.form {
+    background-color: black;
+    opacity: 0.6;
+    border-radius: 25px;
+    width: 25%;
+    margin: auto;;
+    padding: 20px;
+}
+
+.form-header {
+    color: white;
+    text-align: center;
+}
+
+.wrapper {
+    padding-top: 40px;
+    width: 50%;
+    margin: auto;
+}
+
+.txtb {
+    border-bottom: 2px solid #adadad;
+    margin-bottom: 30px;
+}
+
+.txtb input {
+    border: none;
+    background: none;
+    outline: none;
+    width: 100%;
+    font-size: 17px;
+    color: #f5f2d0;
+    height: 25px;
+}
+
+.txtb input::-webkit-input-placeholder {
+    font-style: italic;
+ }
+
+ .show-password {
+    text-align: center;
+    color: #f5f2d0;
+ }
+
+.join-btn {
+    margin-top: 20px;
+}
+
+.account-text {
+    color: #f5f2d0;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.bottom-txt {
+    color: white;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.bottom-href {
+    color: orange;
+}
+
+.bottom-href:hover {
+    color: green;
+    text-decoration: none;
+}
+
+.logout-btn {
+    text-align: center;
+    width: 50%;
+    margin: auto;
+}
+
+.room-list {
+    width: 50%;
+    margin: auto;
+    text-align: center;
+}
+
+.room-btn {
+    margin:  20px auto;
+}
+
+.create-room {
+    width: 50%;
+    margin: 20px auto;
+}
+
+#room-name-txt {
+    background-color: rgba(0, 0, 0, 0.4);
+    border: none;
+    padding-left: 10px;
+    color: white;
+}
+
+#room-name-txt::placeholder {
+    color:  white;
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/index.css">
+    <title>Room List</title>
+</head>
+<body>
+    <div class="title">
+        <p>Room List</p>
+    </div>
+
+    <% if(failure) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= msg %>
+        </div>
+    <% } %>
+
+    <div class="room-list">
+        <% rooms.forEach(room => { %>
+            <a href="/<%= username %>/rooms/<%= room.name %>"class="btn btn-dark btn-lg room-btn"><%= room.name %></a><br>
+        <% }); %>
+        
+        <form action="/rooms" method="POST">
+            <div class="input-group mb-3 create-room">
+                <input name="roomName" id="room-name-txt" type="text" class="form-control room-txt-box" placeholder="New room name" onfocus="this.placeholder=''" onblur="this.placeholder='New room name'" autocomplete="off">
+                <div>
+                    <button type="submit" class="btn btn-secondary" type="submit">Create</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="logout-btn">
+            <form action="/logout" method="POST">
+                <button type="submit" class="btn btn-light btn-lg">Logout</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
