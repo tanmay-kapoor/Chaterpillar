@@ -1,62 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/index.css">
-    <title>SignUp</title>
-</head>
-<body>
-    <div class="title">
-        <p>Chaterpilar</p>
-    </div>
-
-    <% if(failure) { %>
-        <div class="alert alert-danger" role="alert">
-            <%= msg %>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+            integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="css/index.css" />
+        <title>SignUp</title>
+    </head>
+    <body>
+        <div class="title">
+            <p>Chaterpillar</p>
         </div>
-    <% } %>
 
-    <form action="/signup" method="POST">
-        <div class="form">
-            <div class="form-header">
-                <h1>SignUp here!</h1>
-            </div>
-    
-            <div class="form-details">
-                <div class="wrapper">
-                    <div class="txtb">
-                        <input name="email" type="email" placeholder="Enter email" required>
-                    </div>
+        <% if(failure) { %>
+        <div class="alert alert-danger" role="alert"><%= msg %></div>
+        <% } %>
 
-                    <div class="txtb">
-                        <input name="username" type="text" placeholder="Choose username" required>
-                    </div>
-
-                    <div class="txtb">
-                        <input name="name" type="text" placeholder="Your name" required>
-                    </div>
-        
-                    <div class="txtb">
-                        <input id="password" name="password" type="password" placeholder="Enter password" required>    
-                    </div>
-
-                    <div class="show-password">
-                        <input type="checkbox" id="password-checkbox" name="password-checkbox" value="invisible">
-                        <label for="password-checkbox"> Show password</label><br>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-outline-light btn-lg btn-block join-btn">Create</button>
+        <form action="/signup" method="POST">
+            <div class="form">
+                <div class="form-header">
+                    <h1>SignUp here!</h1>
                 </div>
 
+                <div class="form-details">
+                    <div class="wrapper">
+                        <div class="txtb">
+                            <input
+                                name="email"
+                                type="email"
+                                placeholder="Enter email"
+                                required
+                            />
+                        </div>
+
+                        <div class="txtb">
+                            <input
+                                name="username"
+                                type="text"
+                                placeholder="Choose username"
+                                required
+                            />
+                        </div>
+
+                        <div class="txtb">
+                            <input
+                                name="name"
+                                type="text"
+                                placeholder="Your name"
+                                required
+                            />
+                        </div>
+
+                        <div class="txtb">
+                            <input
+                                id="password"
+                                name="password"
+                                type="password"
+                                placeholder="Enter password"
+                                required
+                            />
+                        </div>
+
+                        <div class="show-password">
+                            <input
+                                type="checkbox"
+                                id="password-checkbox"
+                                name="password-checkbox"
+                                value="invisible"
+                            />
+                            <label for="password-checkbox"> Show password</label
+                            ><br />
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-outline-light btn-lg btn-block join-btn"
+                        >
+                            Create
+                        </button>
+                    </div>
+                </div>
+                <p class="bottom-txt">
+                    Already have an account?
+                    <a class="bottom-href" href="/login">Login</a>
+                </p>
             </div>
-            <p class="bottom-txt">Already have an account? <a class="bottom-href" href="/login">Login</a></p>
-        </div>
-    </form>
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="js/index.js"></script>
-</body>
+        </form>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="js/index.js"></script>
+    </body>
 </html>

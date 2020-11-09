@@ -5,45 +5,44 @@ const room = roomName.innerText;
 
 const socket = io();
 
-socket.emit("joinRoom", {room, url: document.URL});
+socket.emit("joinRoom", { room, url: document.URL });
 
 socket.on("roomUsers", ({ room, users }) => {
     updateSideBar(room, users);
 });
 
-socket.on("message", msg => {
-    if(msg.text.trim() !== "") {
-        outputMessage(msg);                     // passing socket.id sice msg.username can be repeated for users
+socket.on("message", (msg) => {
+    if (msg.text.trim() !== "") {
+        outputMessage(msg); // passing socket.id sice msg.username can be repeated for users
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 });
 
 socket.on("deleteTypingMsg", () => {
-    document.querySelectorAll(".typing-msg").forEach(msg => {
+    document.querySelectorAll(".typing-msg").forEach((msg) => {
         msg.remove();
     });
 });
 
-socket.on("deleteMessage", details => {
-    document.getElementsByName(details.username).forEach(msg => {
+socket.on("deleteMessage", (details) => {
+    document.getElementsByName(details.username).forEach((msg) => {
         const chatMessage = msg.parentNode.parentNode;
         const children = chatMessage.children;
         const text = children[1].innerText;
-        if(text === details.text) {
+        if (text === details.text) {
             const time = children[0].children[1].innerText;
-            if(time === details.time) {
+            if (time === details.time) {
                 chatMessage.remove();
             }
         }
     });
 });
 
-
-
-let first = true, timeout;
+let first = true,
+    timeout;
 
 const sendBtn = document.querySelector(".send-btn");
-sendBtn.addEventListener("click", e => {
+sendBtn.addEventListener("click", (e) => {
     e.preventDefault();
     const msg = document.getElementById("msg").value;
     document.getElementById("msg").value = "";
@@ -54,7 +53,7 @@ sendBtn.addEventListener("click", e => {
 
 const msgArea = document.querySelector("#msg");
 msgArea.addEventListener("keypress", () => {
-    if(first) {
+    if (first) {
         first = false;
         socket.emit("typing");
         clearTimeout(timeout);
@@ -68,11 +67,11 @@ function timeoutFunction() {
 }
 
 function updateSideBar(room, users) {
-    usersList.innerHTML = "";       //clear users list when new user joined and form again
-    users.forEach(user => {
+    usersList.innerHTML = ""; //clear users list when new user joined and form again
+    users.forEach((user) => {
         const ul = document.createElement("ul");
         ul.innerText = user.name;
-        if(user.id === socket.id) {
+        if (user.id === socket.id) {
             ul.innerText += " (You)";
         }
         usersList.appendChild(ul);
@@ -86,10 +85,10 @@ function outputMessage(msg) {
     div.innerHTML = `<p class="meta"><span name=${msg.username} class="name">${msg.name}</span> <span>${msg.time}</span></p>
     <p class="text">${msg.text}</p>`;
 
-    if(msg.name !== "Admin") {
+    if (msg.name !== "Admin") {
         div.classList.add("not-bot");
 
-        if(msg.id === socket.id) {
+        if (msg.id === socket.id) {
             div.classList.add("sender");
 
             const btn = document.createElement("button");
@@ -98,19 +97,19 @@ function outputMessage(msg) {
             div.childNodes[0].appendChild(btn);
         }
     } else {
-        if(msg.text.includes("is typing a message..")) {
+        if (msg.text.includes("is typing a message..")) {
             div.classList.add("typing-msg");
         }
     }
     chatMessages.appendChild(div);
 
     $(".delete-btn").unbind();
-    $(".delete-btn").click(function() {
+    $(".delete-btn").click(function () {
         const parent = $(this).parent();
         const lastIndex = parent[0].innerHTML.indexOf('"', 12);
 
         const bigMsg = parent.parent()[0].innerHTML.trim();
-        const start = bigMsg.lastIndexOf('"')+2;
+        const start = bigMsg.lastIndexOf('"') + 2;
         const end = bigMsg.lastIndexOf("<");
 
         let text = bigMsg.substring(start, end);
@@ -118,6 +117,6 @@ function outputMessage(msg) {
         let name = parent.children()[0].innerHTML;
         let time = $(this).parent().children()[1].innerHTML;
 
-        socket.emit("deleteMessage", {username, time, text, room});
+        socket.emit("deleteMessage", { username, time, text, room });
     });
 }

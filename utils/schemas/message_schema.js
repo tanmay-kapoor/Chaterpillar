@@ -5,7 +5,7 @@ const messageSchema = new mongoose.Schema({
     name: String,
     text: String,
     time: String,
-    room: String
+    room: String,
 });
 
 module.exports = new mongoose.model("Message", messageSchema);

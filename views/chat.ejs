@@ -1,75 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-  <link rel="stylesheet" href="/css/chat.css">
-  <title>Room : <%= roomName %></title>
-</head>
-<body>
-  <div class="chat-container">
-    <header class="chat-header">
-      <h1><i class="fas fa-smile"></i> Chaterpillar</h1>
-      <a href="../rooms" class="btn btn-outline-secondary btn-lg">Leave Room</a>
-    </header>
-    <main class="chat-main">
-      <div class="chat-sidebar">
-          <div class="chat-room">
-            <h3><i class="fas fa-comments"></i> Room Name:</h3>
-            <h2 id="room-name"><%= roomName %></h2>
-          </div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+            integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk="
+            crossorigin="anonymous"
+        />
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+            integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+            crossorigin="anonymous"
+        />
+        <link rel="stylesheet" href="/css/chat.css" />
+        <title>Room : <%= roomName %></title>
+    </head>
+    <body>
+        <div class="chat-container">
+            <header class="chat-header">
+                <h1><i class="fas fa-smile"></i> Chaterpillar</h1>
+                <a href="../rooms" class="btn btn-outline-secondary btn-lg"
+                    >Leave Room</a
+                >
+            </header>
+            <main class="chat-main">
+                <div class="chat-sidebar">
+                    <div class="chat-room">
+                        <h3><i class="fas fa-comments"></i> Room Name:</h3>
+                        <h2 id="room-name"><%= roomName %></h2>
+                    </div>
 
-          <div class="chat-users">
-            <h3><i class="fas fa-users"></i> Users</h3>
-            <ul id="users">
-            </ul>
-          </div>
+                    <div class="chat-users">
+                        <h3><i class="fas fa-users"></i> Users</h3>
+                        <ul id="users"></ul>
+                    </div>
+                </div>
+                <div class="chat-messages">
+                    <% messages.forEach(message => { %>
+                    <div class="message not-bot">
+                        <p class="meta">
+                            <span name="<%= message.username %>" class="name"
+                                ><%= message.name %></span
+                            >
+                            <span><%= message.time %></span>
+                        </p>
+                        <p class="text"><%= message.text %></p>
+                    </div>
+                    <% }); %>
+                </div>
 
-      </div>
-      <div class="chat-messages">
-        <% messages.forEach(message => { %>
-          <div class="message not-bot">
-            <p class="meta"><span name="<%= message.username %>" class="name"><%= message.name %></span> <span><%= message.time %></span></p>
-            <p class="text"><%= message.text %></p>
-          </div>
-        <% }); %>
-      </div>
+                <% let temp = currentUsername; %>
+                <script>
+                    let username = "<%= temp %>";
+                    const spans = document.querySelectorAll(".name");
+                    spans.forEach((span) => {
+                        if (span.getAttribute("name") === username) {
+                            const p = span.parentNode.parentNode;
+                            p.classList.add("sender");
 
-      <% let temp = currentUsername; %>
-      <script>
-        let username = "<%= temp %>";
-        const spans = document.querySelectorAll(".name");
-        spans.forEach(span => {
-          if(span.getAttribute("name") === username) {
-            const p = span.parentNode.parentNode;
-            p.classList.add("sender");
+                            const btn = document.createElement("button");
+                            btn.classList.add(
+                                "btn",
+                                "btn-sm",
+                                "btn-info",
+                                "delete-btn"
+                            );
+                            btn.innerHTML = "Delete";
+                            p.childNodes[1].appendChild(btn);
+                        }
+                    });
+                </script>
+            </main>
 
-            const btn = document.createElement("button");
-            btn.classList.add("btn", "btn-sm", "btn-info", "delete-btn");
-            btn.innerHTML = "Delete";
-            p.childNodes[1].appendChild(btn);
-          }
-        });
-      </script>
-
-    </main>
-
-    <div class="chat-form-container">
-      <form id="chat-form">
-        <div class="input-group mb-3">
-            <input id="msg" type="text" class="form-control" placeholder="Enter Message" autocomplete="off" required>
-            <div class="input-group-append">
-              <button class="btn btn-outline-secondary send-btn" type="submit"><i class="fas fa-paper-plane"></i> Send</button>
+            <div class="chat-form-container">
+                <form id="chat-form">
+                    <div class="input-group mb-3">
+                        <input
+                            id="msg"
+                            type="text"
+                            class="form-control"
+                            placeholder="Enter Message"
+                            autocomplete="off"
+                            required
+                        />
+                        <div class="input-group-append">
+                            <button
+                                class="btn btn-outline-secondary send-btn"
+                                type="submit"
+                            >
+                                <i class="fas fa-paper-plane"></i> Send
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-      </form>
-    </div>
-  </div>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="/js/script.js"></script>
-</body>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="/js/script.js"></script>
+    </body>
 </html>
