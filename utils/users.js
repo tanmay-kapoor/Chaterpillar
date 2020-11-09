@@ -17,7 +17,7 @@ async function userJoin(id, username, room) {
 }
 
 async function userLeave(id) {
-    const user = await Activeuser.findOneAndRemove({_id: id}); 
+    const user = await Activeuser.findOneAndRemove({_id: id}, {useFindAndModify: false}); 
     return user;
 }
 

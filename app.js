@@ -165,14 +165,18 @@ app.post("/signup", checkNotAuthenticated, (req, res) => {
 });
 
 app.get("/:username/rooms", checkAuthenticated, (req, res) => {
-    Room.find({}, (err, rooms) => {
-        if(!err) {
-            res.render("rooms", {failure: failure, msg: msg, rooms: rooms, username: req.params.username});
-            failure = msg = undefined;
-        } else {
-            console.log(err);
-        }
-    });
+    if(req.params.username !== req.user.username) {
+        checkNotAuthenticated(req, res);
+    } else {
+        Room.find({}, (err, rooms) => {
+            if(!err) {
+                res.render("rooms", {failure: failure, msg: msg, rooms: rooms, username: req.params.username});
+                failure = msg = undefined;
+            } else {
+                console.log(err);
+            }
+        });
+    }
 });
 
 app.post("/rooms", checkAuthenticated, (req, res) => {
@@ -215,24 +219,28 @@ app.post("/rooms", checkAuthenticated, (req, res) => {
 });
 
 app.get("/:username/rooms/:room", checkAuthenticated, (req, res) => {
-    Room.findOne({name: { $regex: new RegExp(req.params.room, "i") }}, (err, room) => {
-        if(!err) {
-            if(room) {
-                Message.find({room: room.name}, (err, messages) => {
-                    if(!err) {
-                        res.render("chat", {roomName: room.name, messages: messages, currentUsername: req.params.username});
-                    } else {
-                        console.log(err)
-                    }
-                });
+    if(req.params.username !== req.user.username) {
+        checkNotAuthenticated(req, res);
+    } else {
+        Room.findOne({name: { $regex: new RegExp(req.params.room, "i") }}, (err, room) => {
+            if(!err) {
+                if(room) {
+                    Message.find({room: room.name}, (err, messages) => {
+                        if(!err) {
+                            res.render("chat", {roomName: room.name, messages: messages, currentUsername: req.params.username});
+                        } else {
+                            console.log(err)
+                        }
+                    });
+                } else {
+                    failure = true; msg = req.params.room + " doesn't exist";
+                    res.redirect("/"+req.params.rooms+"/rooms");
+                }
             } else {
-                failure = true; msg = req.params.room + " doesn't exist";
-                res.redirect("/"+req.params.rooms+"/rooms");
+                console.log(err);
             }
-        } else {
-            console.log(err);
-        }
-    });
+        });
+    }
 });
 
 app.post("/logout", checkAuthenticated, (req, res) => {
