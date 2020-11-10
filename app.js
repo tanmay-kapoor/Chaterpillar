@@ -298,31 +298,6 @@ app.post("/reset", checkNotAuthenticated, (req, res) => {
             console.log(err);
         }
     });
-
-    // User.findOneAndUpdate(
-    //     { username },
-    //     { password },
-    //     { useFindAndModify: false },
-    //     (err, result) => {
-    //         if (!err) {
-    //             Link.findOneAndDelete(
-    //                 { uuid },
-    //                 { useFindAndModify: false },
-    //                 (err, result) => {
-    //                     if (!err) {
-    //                         created = true;
-    //                         msg = "Password updated!";
-    //                         res.redirect("/login");
-    //                     } else {
-    //                         console.log(err);
-    //                     }
-    //                 }
-    //             );
-    //         } else {
-    //             console.log(err);
-    //         }
-    //     }
-    // );
 });
 
 app.get("/:username/rooms", checkAuthenticated, (req, res) => {

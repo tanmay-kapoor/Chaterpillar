@@ -23,15 +23,7 @@
 
         <% if(messages.error) { %>
         <div class="alert alert-danger" role="alert"><%= messages.error %></div>
-        <% } %>
-
-        <!-- <% if(failure) { %>
-        <div class="alert alert-danger" role="alert">
-            <%= msg %>
-        </div>
-    <% } %> -->
-
-        <% if(created) { %>
+        <% } %> <% if(created) { %>
         <div class="alert alert-success" role="alert"><%= msg %></div>
         <% } %>
 
