@@ -91,6 +91,19 @@ body {
     text-decoration: none;
 }
 
+.forgot-password-text {
+    text-align: center;
+}
+
+.forgot-password-text a {
+    color: orange;
+}
+
+.forgot-password-text a:hover {
+    color: green;
+    text-decoration: none;
+}
+
 .logout-btn {
     text-align: center;
     width: 50%;

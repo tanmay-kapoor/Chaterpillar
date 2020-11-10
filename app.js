@@ -14,6 +14,9 @@ const passport = require("passport");
 const initialisePassport = require("./passport-config");
 const flash = require("express-flash");
 const session = require("express-session");
+const { v4: uuidv4 } = require("uuid");
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const app = express();
 const server = http.createServer(app);
@@ -27,6 +30,7 @@ const botName = "Admin";
 const User = require("./utils/schemas/user_schema.js");
 const Room = require("./utils/schemas/room_schema.js");
 const Message = require("./utils/schemas/message_schema.js");
+const Link = require("./utils/schemas/link_schema.js");
 
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
@@ -199,6 +203,126 @@ app.post("/signup", checkNotAuthenticated, (req, res) => {
             }
         }
     );
+});
+
+app.get("/forgot", checkNotAuthenticated, (req, res) => {
+    res.render("forgot", { failure: failure, msg: msg });
+    failure = msg = undefined;
+});
+
+app.post("/forgot", checkNotAuthenticated, (req, res) => {
+    User.findOne({ email: req.body.email }, async (err, user) => {
+        if (!err) {
+            if (user) {
+                const uuid = uuidv4();
+                const newId = new Link({ uuid, username: user.username });
+
+                newId
+                    .save()
+                    .then(() => {
+                        const toSend = `<p>Hey <strong>${user.name}!</strong> <br><br>
+                        You have requested to reset the password for your account. <br><br>
+                        To reset your password please <strong><a href="http://localhost:3000/reset/${uuid}" style="text-decoration: none;">Click here!</a></strong></p>
+                        `;
+                        const message = {
+                            to: req.body.email,
+                            from: process.env.SENDER_EMAIL,
+                            subject: "Reset password",
+                            html: toSend,
+                        };
+
+                        sgMail
+                            .send(message)
+                            .then(() => {
+                                created = true;
+                                msg = "Check your email!";
+                                res.redirect("/login");
+                            })
+                            .catch((err) => console.log(err));
+                    })
+                    .catch((err) => console.log(err));
+            } else {
+                failure = true;
+                msg = "Account with this email doesn't exist!";
+                res.redirect("/forgot");
+            }
+        } else {
+            console.log(err);
+        }
+    });
+});
+
+app.get("/reset/:uuid", checkNotAuthenticated, (req, res) => {
+    const uuid = req.params.uuid;
+
+    Link.findOne({ uuid }, (err, record) => {
+        if (!err) {
+            if (record) {
+                res.render("reset", { uuid });
+            } else {
+                res.send("Invalid url");
+            }
+        } else {
+            console.log(err);
+        }
+    });
+});
+
+app.post("/reset", checkNotAuthenticated, (req, res) => {
+    const uuid = req.body.uuid;
+    const password = req.body.password;
+
+    bcrypt.hash(password, saltRounds, async (err, hash) => {
+        if (!err) {
+            try {
+                const record = await Link.findOne({ uuid });
+                const username = record.username;
+
+                const updatedRecord = await User.findOneAndUpdate(
+                    { username },
+                    { password: hash },
+                    { useFindAndModify: false }
+                );
+                const result = await Link.findOneAndDelete(
+                    { uuid },
+                    { useFindAndModify: false }
+                );
+
+                created = true;
+                msg = "Password updated!";
+                res.redirect("/login");
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
+            console.log(err);
+        }
+    });
+
+    // User.findOneAndUpdate(
+    //     { username },
+    //     { password },
+    //     { useFindAndModify: false },
+    //     (err, result) => {
+    //         if (!err) {
+    //             Link.findOneAndDelete(
+    //                 { uuid },
+    //                 { useFindAndModify: false },
+    //                 (err, result) => {
+    //                     if (!err) {
+    //                         created = true;
+    //                         msg = "Password updated!";
+    //                         res.redirect("/login");
+    //                     } else {
+    //                         console.log(err);
+    //                     }
+    //                 }
+    //             );
+    //         } else {
+    //             console.log(err);
+    //         }
+    //     }
+    // );
 });
 
 app.get("/:username/rooms", checkAuthenticated, (req, res) => {
