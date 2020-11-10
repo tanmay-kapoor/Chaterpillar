@@ -222,7 +222,7 @@ app.post("/forgot", checkNotAuthenticated, (req, res) => {
                     .then(() => {
                         const toSend = `<p>Hey <strong>${user.name}!</strong> <br><br>
                         You have requested to reset the password for your account. <br><br>
-                        To reset your password please <strong><a href="https://chaterpillar.herokuapp.com/reset/${uuid}/" style="text-decoration: none;">Click here!</a></strong></p>
+                        To reset your password please <strong><a href="https://chaterpillar.herokuapp.com/reset/${uuid}" style="text-decoration: none;">Click here!</a></strong></p>
                         `;
                         const message = {
                             to: req.body.email,
