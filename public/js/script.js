@@ -106,16 +106,16 @@ function outputMessage(msg) {
     $(".delete-btn").unbind();
     $(".delete-btn").click(function () {
         const parent = $(this).parent();
-        const lastIndex = parent[0].innerHTML.indexOf('"', 12);
+        const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
 
         const bigMsg = parent.parent()[0].innerHTML.trim();
         const start = bigMsg.lastIndexOf('"') + 2;
         const end = bigMsg.lastIndexOf("<");
 
         let text = bigMsg.substring(start, end);
-        let username = $(this).parent()[0].innerHTML.substring(12, lastIndex);
+        let username = parent[0].innerHTML.trim().substring(12, lastIndex);
         let name = parent.children()[0].innerHTML;
-        let time = $(this).parent().children()[1].innerHTML;
+        let time = parent.children()[1].innerHTML;
 
         socket.emit("deleteMessage", { username, time, text, room });
     });
