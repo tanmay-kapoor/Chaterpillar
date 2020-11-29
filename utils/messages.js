@@ -25,15 +25,17 @@ async function formatMessage(username, text, room) {
         temp.room = room;
         temp.name = record.name;
 
-        const message = new Message(temp);
+        if (text !== "") {
+            const message = new Message(temp);
 
-        message.save((err) => {
-            if (!err) {
-                return details;
-            } else {
-                console.log(err);
-            }
-        });
+            message.save((err) => {
+                if (!err) {
+                    return details;
+                } else {
+                    console.log(err);
+                }
+            });
+        }
     }
     return details;
 }
