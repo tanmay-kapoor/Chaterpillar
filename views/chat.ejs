@@ -39,17 +39,51 @@
                     </div>
                 </div>
                 <div class="chat-messages">
-                    <% messages.forEach(message => { %>
-                    <div class="message not-bot">
-                        <p class="meta">
-                            <span name="<%= message.username %>" class="name"
-                                ><%= message.name %></span
-                            >
-                            <span><%= message.time %></span>
+                    <div class="message date">
+                        <p class="text date-text" style="text-align: center">
+                            <% if(messages.length !== 0) { %>
+                             <%= messages[0].date %> 
+                            <% } else { %>
+                                Today
+                            <% } %>
                         </p>
-                        <p class="text"><%= message.text %></p>
                     </div>
-                    <% }); %>
+
+                    <% for(let i = 1; i<messages.length; i++) { %>
+                        <div class="message not-bot">
+                            <p class="meta">
+                                <span name="<%= messages[i-1].username %>" class="name"
+                                    ><%= messages[i-1].name %></span
+                                >
+                                <span><%= messages[i-1].time %></span>
+                            </p>
+                            <p class="text"><%= messages[i-1].text %></p>
+                        </div>
+
+                        <% if(messages[i-1].date !== messages[i].date) { %>
+                            <div class="message date">
+                                <p class="text" style="text-align: center">
+                                    <%= messages[i].date %>
+                                </p>
+                            </div>
+                        <% } %>
+                    <% } %>
+                        
+                    <% if(messages.length !== 0) { %>
+                        <div class="message not-bot">
+                            <p class="meta">
+                                <span
+                                    name="<%= messages[messages.length-1].username %>"
+                                    class="name"
+                                    ><%= messages[messages.length-1].name %></span
+                                >
+                                <span><%= messages[messages.length-1].time %></span>
+                            </p>
+                            <p class="text">
+                                <%= messages[messages.length-1].text %>
+                            </p>
+                        </div>
+                    <% } %>
                 </div>
 
                 <% let temp = currentUsername; %>
