@@ -321,7 +321,7 @@ app.get("/:username/rooms", checkAuthenticated, (req, res) => {
 });
 
 app.post("/rooms", checkAuthenticated, (req, res) => {
-    room = req.body.roomName;
+    room = req.body.roomName.trim();
     const notAllowed = "#`$^*()-+[]{}/\\'\".,:;";
 
     for (let i = 0; i < room.length; i++) {
@@ -342,17 +342,32 @@ app.post("/rooms", checkAuthenticated, (req, res) => {
             (err, record) => {
                 if (!err) {
                     if (!record) {
-                        const newRoom = new Room({ name: room });
+                        User.findOne(
+                            { username: req.user.username },
+                            (err, record) => {
+                                if (!err) {
+                                    const newRoom = new Room({
+                                        name: room,
+                                        creator: record.name,
+                                    });
 
-                        newRoom.save((err) => {
-                            if (!err) {
-                                res.redirect(
-                                    "/" + req.user.username + "/rooms/" + room
-                                );
-                            } else {
-                                console.log(err);
+                                    newRoom.save((err) => {
+                                        if (!err) {
+                                            res.redirect(
+                                                "/" +
+                                                    req.user.username +
+                                                    "/rooms/" +
+                                                    room
+                                            );
+                                        } else {
+                                            console.log(err);
+                                        }
+                                    });
+                                } else {
+                                    console.log(err);
+                                }
                             }
-                        });
+                        );
                     } else {
                         failure = true;
                         msg = "Room exists already";
