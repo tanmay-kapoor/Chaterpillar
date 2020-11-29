@@ -109,29 +109,3 @@ body {
     width: 50%;
     margin: auto;
 }
-
-.room-list {
-    width: 50%;
-    margin: auto;
-    text-align: center;
-}
-
-.room-btn {
-    margin: 20px auto;
-}
-
-.create-room {
-    width: 50%;
-    margin: 20px auto;
-}
-
-#room-name-txt {
-    background-color: rgba(0, 0, 0, 0.4);
-    border: none;
-    padding-left: 10px;
-    color: white;
-}
-
-#room-name-txt::placeholder {
-    color: white;
-}

@@ -1,0 +1,118 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-image: url("../background.jpg");
+}
+
+.title {
+    margin-top: 10px;
+    color: white;
+    text-align: center;
+    font-family: "Sacramento", cursive;
+    font-size: 5rem;
+}
+
+.alert {
+    width: 27%;
+    margin: 0 auto 30px;
+    text-align: center;
+}
+
+.txtb {
+    border-bottom: 2px solid #adadad;
+    margin-bottom: 30px;
+}
+
+.txtb input {
+    border: none;
+    background: none;
+    outline: none;
+    width: 100%;
+    font-size: 17px;
+    color: #f5f2d0;
+    height: 25px;
+}
+
+.txtb input::-webkit-input-placeholder {
+    font-style: italic;
+}
+
+.room-list {
+    width: 95%;
+    text-align: center;
+    margin: auto;
+    margin-top: 70px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-gap: 3em;
+    grid-auto-rows: minmax(200px, auto);
+}
+
+.create-room {
+    width: 50%;
+    margin: 20px auto;
+}
+
+.card {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0);
+    color: rgba(255, 255, 255, 0.8);
+    border-radius: 16px;
+    font-family: "Montserrat", sans-serif;
+    border: none;
+}
+
+.front-content {
+    width: 100%;
+}
+
+.back-content {
+    width: 60%;
+}
+
+.middle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.front,
+.back {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 16px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    backface-visibility: hidden;
+    position: absolute;
+    transition: 0.4s linear;
+}
+
+.front {
+    transform: perspective(600px) rotateY(0deg);
+}
+
+.back {
+    transform: perspective(600px) rotateY(180deg);
+}
+
+.card:hover > .front {
+    transform: perspective(600px) rotateY(-180deg);
+}
+
+.card:hover > .back {
+    transform: perspective(600px) rotateY(0deg);
+}
+
+.join-btn {
+    margin-top: 30px;
+}
+
+.logout {
+    position: relative;
+}
