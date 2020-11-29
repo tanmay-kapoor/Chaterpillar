@@ -15,6 +15,7 @@
             integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
             crossorigin="anonymous"
         />
+        <script type = "text/JavaScript" src = "https://MomentJS.com/downloads/moment.js"></script>
         <link rel="stylesheet" href="/css/chat.css" />
         <title>Room : <%= roomName %></title>
     </head>
@@ -39,15 +40,16 @@
                     </div>
                 </div>
                 <div class="chat-messages">
-                    <div class="message date">
-                        <p class="text date-text" style="text-align: center">
-                            <% if(messages.length !== 0) { %>
-                             <%= messages[0].date %> 
-                            <% } else { %>
-                                Today
-                            <% } %>
-                        </p>
-                    </div>
+
+                    <% if(messages.length !== 0) { %>
+                        <div class="message date">
+                            <p class="text" style="text-align: center">
+                                <% if(messages.length !== 0) { %>
+                                 <%= messages[0].date %> 
+                                <% } %>
+                            </p>
+                        </div>
+                    <% } %>
 
                     <% for(let i = 1; i<messages.length; i++) { %>
                         <div class="message not-bot">
@@ -62,7 +64,7 @@
 
                         <% if(messages[i-1].date !== messages[i].date) { %>
                             <div class="message date">
-                                <p class="text" style="text-align: center">
+                                <p class="text">
                                     <%= messages[i].date %>
                                 </p>
                             </div>
@@ -84,6 +86,21 @@
                             </p>
                         </div>
                     <% } %>
+
+                    <script>
+                        const dates = document.querySelectorAll(".date > .text");
+                        const currDate = moment().format("DD-MMM-YYYY");
+                        if(dates.length===0 || dates[dates.length-1].innerText !== currDate) {
+                            const div = document.createElement("div");
+                            div.classList.add("message", "date");
+                            const p = document.createElement("p");
+                            p.classList.add("text");
+                            p.innerText = currDate;
+                            div.appendChild(p);
+                            const chatMessages = document.querySelector(".chat-messages");
+                            chatMessages.appendChild(div);
+                        }
+                    </script>
                 </div>
 
                 <% let temp = currentUsername; %>

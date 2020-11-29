@@ -130,15 +130,14 @@ ul {
     font-size: 15px;
     font-weight: bold;
     color: #7386ff;
-    margin-bottom: 7px;
 }
 
 .message {
-    border-radius: 5px;
+    border-radius: 15px;
 }
 
 .date {
-    width: 18%;
+    width: 14%;
     margin: auto;
     position: relative;
     height: 2rem;
@@ -150,10 +149,12 @@ ul {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    text-align: center;
+    font-size: 0.8rem;
 }
 
 .not-bot {
-    width: 45%;
+    width: 35%;
 }
 
 .sender {
