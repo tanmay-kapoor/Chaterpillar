@@ -66,6 +66,11 @@ body {
     color: #f5f2d0;
 }
 
+#password-checkbox:hover,
+#password-label:hover {
+    cursor: pointer;
+}
+
 .join-btn {
     margin-top: 20px;
 }
