@@ -105,6 +105,7 @@ function outputMessage(msg) {
 
     $(".delete-btn").unbind();
     $(".delete-btn").click(function () {
+        console.log("clicked");
         const parent = $(this).parent();
         const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
 
@@ -112,10 +113,15 @@ function outputMessage(msg) {
         const start = bigMsg.lastIndexOf('"') + 2;
         const end = bigMsg.lastIndexOf("<");
 
-        let text = bigMsg.substring(start, end);
+        let text = bigMsg.substring(start, end).trim();
         let username = parent[0].innerHTML.trim().substring(12, lastIndex);
         let name = parent.children()[0].innerHTML;
         let time = parent.children()[1].innerHTML;
+
+        console.log(text);
+        console.log(username);
+        console.log(name);
+        console.log(time);
 
         socket.emit("deleteMessage", { username, time, text, room });
     });

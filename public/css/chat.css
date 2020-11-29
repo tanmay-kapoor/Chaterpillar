@@ -120,7 +120,6 @@ ul {
     padding: 10px;
     margin-bottom: 15px;
     background-color: #e6e9ff;
-    border-radius: 5px;
 }
 
 .chat-messages .message .meta span {
@@ -132,6 +131,25 @@ ul {
     font-weight: bold;
     color: #7386ff;
     margin-bottom: 7px;
+}
+
+.message {
+    border-radius: 5px;
+}
+
+.date {
+    width: 18%;
+    margin: auto;
+    position: relative;
+    height: 2rem;
+    border-radius: 40px;
+}
+
+.date > .text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .not-bot {
