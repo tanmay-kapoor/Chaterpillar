@@ -63,6 +63,10 @@ ul {
     margin-top: 30px;
 }
 
+#room-name {
+    word-wrap: break-word;
+}
+
 .message-btn {
     text-align: left;
 }
