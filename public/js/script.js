@@ -19,6 +19,14 @@ socket.on("message", (msg) => {
     }
 });
 
+socket.on("base64 file", (msg) => {
+    // console.log(msg);
+    outputFile(msg);
+
+    // scrollTop();             not working for 1st 2 images idk why
+    setTimeout(scrollTop, 0);
+});
+
 socket.on("deleteTypingMsg", () => {
     document.querySelectorAll(".typing-msg").forEach((msg) => {
         msg.remove();
@@ -169,8 +177,28 @@ function readThenSendFile(data) {
     reader.readAsDataURL(data);
 }
 
-socket.on("base64 file", (msg) => {
-    // console.log(msg);
+$(".delete-btn-file").unbind();
+$(".delete-btn-file").click(function () {
+    const parent = $(this).parent();
+    const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
+
+    const bigMsg = parent.parent()[0].innerHTML.trim();
+    const start = bigMsg.indexOf("img src=") + 9;
+    const end = bigMsg.lastIndexOf('"');
+
+    let file = bigMsg.substring(start, end).trim();
+    let username = parent[0].innerHTML.trim().substring(12, lastIndex);
+    let name = parent.children()[0].innerHTML;
+    let time = parent.children()[1].innerHTML;
+
+    socket.emit("deleteFile", { username, time, file, room });
+});
+
+function scrollTop() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function outputFile(msg) {
     const div = document.createElement("div");
     div.classList.add("message");
     div.innerHTML = `<p class="meta"><span name=${msg.username} class="name">${msg.name}</span> <span>${msg.time}</span></p>
@@ -183,22 +211,6 @@ socket.on("base64 file", (msg) => {
     btn.innerHTML = "Delete";
     div.childNodes[0].appendChild(btn);
 
-    temp();
-
-    // scrollTop();             not working for 1st 2 images idk why
-    setTimeout(scrollTop, 0);
-});
-
-temp();
-
-// scrollTop();             not working for 1st 2 images idk why
-setTimeout(scrollTop, 0);
-
-function scrollTop() {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-function temp() {
     $(".delete-btn-file").unbind();
     $(".delete-btn-file").click(function () {
         const parent = $(this).parent();
