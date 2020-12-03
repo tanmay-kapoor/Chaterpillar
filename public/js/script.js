@@ -39,6 +39,20 @@ socket.on("deleteMessage", (details) => {
     });
 });
 
+socket.on("deleteFile", (details) => {
+    document.getElementsByName(details.username).forEach((msg) => {
+        const chatMessage = msg.parentNode.parentNode;
+        const children = chatMessage.children;
+        const file = children[1].src;
+        if (file === details.file) {
+            const time = children[0].children[1].innerText;
+            if (time === details.time) {
+                chatMessage.remove();
+            }
+        }
+    });
+});
+
 let first = true,
     timeout;
 
@@ -110,6 +124,7 @@ function outputMessage(msg) {
         const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
 
         const bigMsg = parent.parent()[0].innerHTML.trim();
+        console.log(bigMsg);
         const start = bigMsg.lastIndexOf('"') + 2;
         const end = bigMsg.lastIndexOf("<");
 
@@ -155,6 +170,28 @@ socket.on("base64 file", (msg) => {
     div.classList.add("file-div", "sender");
 
     chatMessages.appendChild(div);
+    const btn = document.createElement("button");
+    btn.classList.add("btn", "btn-sm", "btn-info", "delete-btn-file");
+    btn.innerHTML = "Delete";
+    div.childNodes[0].appendChild(btn);
+
+    $(".delete-btn-file").unbind();
+    $(".delete-btn-file").click(function () {
+        const parent = $(this).parent();
+        const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
+
+        const bigMsg = parent.parent()[0].innerHTML.trim();
+        const start = bigMsg.indexOf("img src=") + 9;
+        const end = bigMsg.lastIndexOf('"');
+
+        let file = bigMsg.substring(start, end).trim();
+        let username = parent[0].innerHTML.trim().substring(12, lastIndex);
+        let name = parent.children()[0].innerHTML;
+        let time = parent.children()[1].innerHTML;
+
+        socket.emit("deleteFile", { username, time, file, room });
+    });
+
     // scrollTop();             not working for 1st 2 images idk why
     setTimeout(scrollTop, 0);
 });

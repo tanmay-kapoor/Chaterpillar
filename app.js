@@ -127,6 +127,16 @@ io.on("connection", async (socket) => {
             });
         });
 
+        socket.on("deleteFile", (details) => {
+            Message.deleteOne(details, (err, result) => {
+                if (!err) {
+                    io.to(user.room).emit("deleteFile", details);
+                } else {
+                    console.log(err);
+                }
+            });
+        });
+
         socket.on("disconnect", async () => {
             const currentUser = await userLeave(socket.id);
 

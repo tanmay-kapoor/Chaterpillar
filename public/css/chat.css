@@ -166,7 +166,8 @@ ul {
     margin-left: auto;
 }
 
-.delete-btn {
+.delete-btn,
+.delete-btn-file {
     float: right;
 }
 
