@@ -17,6 +17,7 @@ const session = require("express-session");
 const { v4: uuidv4 } = require("uuid");
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const moment = require("moment-timezone");
 
 const app = express();
 const server = http.createServer(app);
@@ -31,6 +32,7 @@ const User = require("./utils/schemas/user_schema.js");
 const Room = require("./utils/schemas/room_schema.js");
 const Message = require("./utils/schemas/message_schema.js");
 const Link = require("./utils/schemas/link_schema.js");
+const Activeuser = require("./utils/schemas/activeuser_schema.js");
 
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
@@ -86,6 +88,20 @@ io.on("connection", async (socket) => {
             msg = await formatMessage(user.username, msg, user.room);
             msg.id = socket.id;
             io.to(user.room).emit("message", msg);
+        });
+
+        socket.on("base64 file", async (msg) => {
+            // console.log("received base64 file from " + msg.username);
+
+            msg.name = user.name;
+            msg.time = moment().tz("Asia/Kolkata").format("h:mm a");
+            msg.date = moment().format("DD-MMM-YYYY");
+            msg.type = "base64 file";
+            msg.room = user.room;
+
+            const newFile = new Message(msg);
+            newFile.save();
+            io.to(user.room).emit("base64 file", msg);
         });
 
         socket.on("typing", async () => {
@@ -381,10 +397,11 @@ app.post("/rooms", checkAuthenticated, (req, res) => {
     }
 });
 
-app.get("/:username/rooms/:room", checkAuthenticated, (req, res) => {
+app.get("/:username/rooms/:room", checkAuthenticated, async (req, res) => {
     if (req.params.username !== req.user.username) {
         checkNotAuthenticated(req, res);
     } else {
+        // if (await singleInstance(req.user.username)) {
         Room.findOne(
             { name: { $regex: new RegExp(req.params.room, "i") } },
             (err, room) => {
@@ -411,6 +428,9 @@ app.get("/:username/rooms/:room", checkAuthenticated, (req, res) => {
                 }
             }
         );
+        // } else {
+        //     res.render("err");
+        // }
     }
 });
 
@@ -432,5 +452,13 @@ function checkNotAuthenticated(req, res, next) {
     }
     next();
 }
+
+// async function singleInstance(username) {
+//     const userIsActive = await Activeuser.findOne({ username });
+//     if (userIsActive) {
+//         return false;
+//     }
+//     return true;
+// }
 
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));

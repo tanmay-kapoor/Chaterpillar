@@ -7,6 +7,9 @@ const messageSchema = new mongoose.Schema({
     time: String,
     room: String,
     date: String,
+    type: String,
+    file: String,
+    fileName: String,
 });
 
 module.exports = new mongoose.model("Message", messageSchema);

@@ -15,6 +15,7 @@ body {
 ul {
     list-style: none;
     padding-bottom: 10px;
+    word-wrap: break-word;
 }
 
 /* width */
@@ -189,4 +190,30 @@ ul {
     padding: 5px;
     height: 40px;
     flex: 1;
+}
+
+.file-upload > input {
+    display: none;
+}
+
+.file-upload > label > img {
+    border-radius: 10px;
+    margin-left: 6px;
+}
+
+.file-upload > label > img:hover {
+    cursor: pointer;
+}
+
+.file-div {
+    width: 45%;
+}
+
+.message img {
+    max-width: 450px;
+    max-height: 300px;
+}
+
+.message img:hover {
+    cursor: pointer;
 }

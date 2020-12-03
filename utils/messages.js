@@ -18,6 +18,7 @@ async function formatMessage(username, text, room) {
         text,
         time: moment().tz("Asia/Kolkata").format("h:mm a"),
         date: moment().format("DD-MMM-YYYY"),
+        type: "text",
     };
 
     if (username !== "Admin") {

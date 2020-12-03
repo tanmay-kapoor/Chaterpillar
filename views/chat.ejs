@@ -52,14 +52,22 @@
                     <% } %>
 
                     <% for(let i = 1; i<messages.length; i++) { %>
-                        <div class="message not-bot">
+                        <% if(messages[i-1].type === "text") { %>
+                            <div class="message not-bot">
+                        <% } else { %>
+                            <div class="message file-div">
+                        <% } %>
                             <p class="meta">
                                 <span name="<%= messages[i-1].username %>" class="name"
                                     ><%= messages[i-1].name %></span
                                 >
                                 <span><%= messages[i-1].time %></span>
                             </p>
-                            <p class="text"><%= messages[i-1].text %></p>
+                            <% if(messages[i-1].type === "text") { %>
+                                <p class="text"><%= messages[i-1].text %></p>
+                            <% } else { %>
+                                <img src="<%= messages[i-1].file %>">
+                            <% } %>
                         </div>
 
                         <% if(messages[i-1].date !== messages[i].date) { %>
@@ -72,7 +80,11 @@
                     <% } %>
                         
                     <% if(messages.length !== 0) { %>
-                        <div class="message not-bot">
+                        <% if(messages[messages.length-1].type==="text") { %>
+                            <div class="message not-bot">
+                        <% } else { %>
+                            <div class="message file-div">
+                        <% } %>
                             <p class="meta">
                                 <span
                                     name="<%= messages[messages.length-1].username %>"
@@ -82,7 +94,11 @@
                                 <span><%= messages[messages.length-1].time %></span>
                             </p>
                             <p class="text">
-                                <%= messages[messages.length-1].text %>
+                                <% if(messages[messages.length-1].type==="text") { %>
+                                    <%= messages[messages.length-1].text %>
+                                <% } else { %>
+                                    <img src="<%= messages[messages.length-1].file %>">
+                                <% } %>
                             </p>
                         </div>
                     <% } %>
@@ -138,6 +154,13 @@
                             required
                         />
                         <div class="input-group-append">
+                            <div class="file-upload">
+                                <label for="file-input">
+                                    <img src="/attach.png">
+                                </label>
+                                <input id="file-input" type="file" multiple>
+                            </div>
+
                             <button
                                 class="btn btn-outline-secondary send-btn"
                                 type="submit"

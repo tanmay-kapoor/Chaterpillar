@@ -2,6 +2,7 @@ const roomName = document.getElementById("room-name");
 const usersList = document.getElementById("users");
 const chatMessages = document.querySelector(".chat-messages");
 const room = roomName.innerText;
+const usernameFromURL = document.URL.split("/")[3];
 
 const socket = io();
 
@@ -14,7 +15,7 @@ socket.on("roomUsers", ({ room, users }) => {
 socket.on("message", (msg) => {
     if (msg.text.trim() !== "") {
         outputMessage(msg); // passing socket.id sice msg.username can be repeated for users
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+        scrollTop();
     }
 });
 
@@ -119,4 +120,45 @@ function outputMessage(msg) {
 
         socket.emit("deleteMessage", { username, time, text, room });
     });
+}
+
+$("#file-input").bind("change", function (e) {
+    // const data = e.originalEvent.target.files[0];
+    // readThenSendFile(data);
+    const files = document.getElementById("file-input").files;
+
+    //forEach gives error idk why
+    for (let i = 0; i < files.length; i++) {
+        readThenSendFile(files[i]);
+    }
+    $("#file-input").prop("value", ""); // to allow same file to be selected again
+});
+
+function readThenSendFile(data) {
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+        var msg = {};
+        msg.username = usernameFromURL;
+        msg.file = evt.target.result;
+        msg.fileName = data.name;
+        socket.emit("base64 file", msg);
+    };
+    reader.readAsDataURL(data);
+}
+
+socket.on("base64 file", (msg) => {
+    // console.log(msg);
+    const div = document.createElement("div");
+    div.classList.add("message");
+    div.innerHTML = `<p class="meta"><span name=${msg.username} class="name">${msg.name}</span> <span>${msg.time}</span></p>
+    <img src="${msg.file}">`;
+    div.classList.add("file-div", "sender");
+
+    chatMessages.appendChild(div);
+    // scrollTop();             not working for 1st 2 images idk why
+    setTimeout(scrollTop, 0);
+});
+
+function scrollTop() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
