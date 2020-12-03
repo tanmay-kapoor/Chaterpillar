@@ -133,8 +133,14 @@
                                 "btn",
                                 "btn-sm",
                                 "btn-info",
-                                "delete-btn"
                             );
+                            try {
+                                if(p.children[1].children[0].nodeType == 1) {
+                                    btn.classList.add("delete-btn-file");    
+                                }
+                            } catch(err) {
+                                btn.classList.add("delete-btn");
+                            }
                             btn.innerHTML = "Delete";
                             p.childNodes[1].appendChild(btn);
                         }

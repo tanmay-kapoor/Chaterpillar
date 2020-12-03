@@ -43,7 +43,16 @@ socket.on("deleteFile", (details) => {
     document.getElementsByName(details.username).forEach((msg) => {
         const chatMessage = msg.parentNode.parentNode;
         const children = chatMessage.children;
-        const file = children[1].src;
+        let file;
+        if (children[1].src) {
+            file = children[1].src;
+        } else {
+            const html = children[1].innerHTML.trim();
+            const start = html.indexOf('"') + 1;
+            const end = html.lastIndexOf('"');
+            file = html.substring(start, end);
+        }
+
         if (file === details.file) {
             const time = children[0].children[1].innerText;
             if (time === details.time) {
@@ -124,7 +133,6 @@ function outputMessage(msg) {
         const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
 
         const bigMsg = parent.parent()[0].innerHTML.trim();
-        console.log(bigMsg);
         const start = bigMsg.lastIndexOf('"') + 2;
         const end = bigMsg.lastIndexOf("<");
 
@@ -175,6 +183,22 @@ socket.on("base64 file", (msg) => {
     btn.innerHTML = "Delete";
     div.childNodes[0].appendChild(btn);
 
+    temp();
+
+    // scrollTop();             not working for 1st 2 images idk why
+    setTimeout(scrollTop, 0);
+});
+
+temp();
+
+// scrollTop();             not working for 1st 2 images idk why
+setTimeout(scrollTop, 0);
+
+function scrollTop() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function temp() {
     $(".delete-btn-file").unbind();
     $(".delete-btn-file").click(function () {
         const parent = $(this).parent();
@@ -191,11 +215,4 @@ socket.on("base64 file", (msg) => {
 
         socket.emit("deleteFile", { username, time, file, room });
     });
-
-    // scrollTop();             not working for 1st 2 images idk why
-    setTimeout(scrollTop, 0);
-});
-
-function scrollTop() {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
