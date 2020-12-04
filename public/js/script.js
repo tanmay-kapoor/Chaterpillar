@@ -51,17 +51,19 @@ socket.on("deleteFile", (details) => {
     document.getElementsByName(details.username).forEach((msg) => {
         const chatMessage = msg.parentNode.parentNode;
         const children = chatMessage.children;
-        let file;
-        if (children[1].src) {
-            file = children[1].src;
+
+        let fileName;
+        if (children[1].children[0].alt) {
+            fileName = children[1].children[0].alt;
         } else {
             const html = children[1].innerHTML.trim();
             const start = html.indexOf('"') + 1;
             const end = html.lastIndexOf('"');
-            file = html.substring(start, end);
+            fileName = html.substring(start, end);
+            console.log("else block", fileName);
         }
 
-        if (file === details.file) {
+        if (fileName === details.fileName) {
             const time = children[0].children[1].innerText;
             if (time === details.time) {
                 chatMessage.remove();
@@ -96,6 +98,10 @@ msgArea.addEventListener("keypress", () => {
 function timeoutFunction() {
     first = true;
     socket.emit("notTyping");
+}
+
+function scrollTop() {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 function updateSideBar(room, users) {
@@ -177,32 +183,11 @@ function readThenSendFile(data) {
     reader.readAsDataURL(data);
 }
 
-$(".delete-btn-file").unbind();
-$(".delete-btn-file").click(function () {
-    const parent = $(this).parent();
-    const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
-
-    const bigMsg = parent.parent()[0].innerHTML.trim();
-    const start = bigMsg.indexOf("img src=") + 9;
-    const end = bigMsg.lastIndexOf('"');
-
-    let file = bigMsg.substring(start, end).trim();
-    let username = parent[0].innerHTML.trim().substring(12, lastIndex);
-    let name = parent.children()[0].innerHTML;
-    let time = parent.children()[1].innerHTML;
-
-    socket.emit("deleteFile", { username, time, file, room });
-});
-
-function scrollTop() {
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
 function outputFile(msg) {
     const div = document.createElement("div");
     div.classList.add("message");
     div.innerHTML = `<p class="meta"><span name=${msg.username} class="name">${msg.name}</span> <span>${msg.time}</span></p>
-    <img src="${msg.file}">`;
+    <p class="text"><img src="${msg.file}" alt="${msg.fileName}"></p>`;
     div.classList.add("file-div", "sender");
 
     chatMessages.appendChild(div);
@@ -215,16 +200,33 @@ function outputFile(msg) {
     $(".delete-btn-file").click(function () {
         const parent = $(this).parent();
         const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
+        const img = parent.parent().children().children()[3];
 
-        const bigMsg = parent.parent()[0].innerHTML.trim();
-        const start = bigMsg.indexOf("img src=") + 9;
-        const end = bigMsg.lastIndexOf('"');
+        const details = {
+            file: img.src,
+            fileName: img.alt,
+            username: parent[0].innerHTML.trim().substring(12, lastIndex),
+            name: parent.children()[0].innerHTML,
+            time: parent.children()[1].innerHTML,
+        };
 
-        let file = bigMsg.substring(start, end).trim();
-        let username = parent[0].innerHTML.trim().substring(12, lastIndex);
-        let name = parent.children()[0].innerHTML;
-        let time = parent.children()[1].innerHTML;
-
-        socket.emit("deleteFile", { username, time, file, room });
+        socket.emit("deleteFile", details);
     });
 }
+
+$(".delete-btn-file").unbind();
+$(".delete-btn-file").click(function () {
+    const parent = $(this).parent();
+    const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
+    const img = parent.parent().children().children()[3];
+
+    const details = {
+        file: img.src,
+        fileName: img.alt,
+        username: parent[0].innerHTML.trim().substring(12, lastIndex),
+        name: parent.children()[0].innerHTML,
+        time: parent.children()[1].innerHTML,
+    };
+
+    socket.emit("deleteFile", details);
+});

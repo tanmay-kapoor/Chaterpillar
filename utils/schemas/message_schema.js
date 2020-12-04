@@ -8,7 +8,7 @@ const messageSchema = new mongoose.Schema({
     room: String,
     date: String,
     type: String,
-    file: String,
+    file: Buffer,
     fileName: String,
 });
 
