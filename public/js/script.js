@@ -52,21 +52,15 @@ socket.on("deleteFile", (details) => {
         const chatMessage = msg.parentNode.parentNode;
         const children = chatMessage.children;
 
-        let fileName;
-        if (children[1].children[0].alt) {
-            fileName = children[1].children[0].alt;
-        } else {
-            const html = children[1].innerHTML.trim();
-            const start = html.indexOf('"') + 1;
-            const end = html.lastIndexOf('"');
-            fileName = html.substring(start, end);
-            console.log("else block", fileName);
-        }
+        // if img tag exists only then deal with msg else skip
+        if (children[1].children[0]) {
+            const fileName = children[1].children[0].alt;
 
-        if (fileName === details.fileName) {
-            const time = children[0].children[1].innerText;
-            if (time === details.time) {
-                chatMessage.remove();
+            if (fileName === details.fileName) {
+                const time = children[0].children[1].innerText;
+                if (time === details.time) {
+                    chatMessage.remove();
+                }
             }
         }
     });
