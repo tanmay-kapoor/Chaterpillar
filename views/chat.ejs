@@ -66,7 +66,7 @@
                             <% if(messages[i-1].type === "text") { %>
                                 <p class="text"><%= messages[i-1].text %></p>
                             <% } else { %>
-                                <p class="text"><img src="<%= messages[i-1].file %>" alt="<%= messages[i-1].fileName %>"></p>
+                                <p class="text"><img src="\uploads\<%= messages[i-1].filename %>" alt="<%= messages[i-1].filename %>"></p>
                             <% } %>
                         </div>
 
@@ -97,7 +97,7 @@
                                 <% if(messages[messages.length-1].type==="text") { %>
                                     <%= messages[messages.length-1].text %>
                                 <% } else { %>
-                                    <img src="<%= messages[messages.length-1].file %>" alt="<%= messages[messages.length-1].fileName %>">
+                                    <img src="\uploads\<%= messages[messages.length-1].filename %>" alt="<%= messages[messages.length-1].filename %>">
                                 <% } %>
                             </p>
                         </div>
@@ -149,8 +149,16 @@
             </main>
 
             <div class="chat-form-container">
-                <form id="chat-form">
+                <form action="/upload" method="POST" id="chat-form" enctype="multipart/form-data" target="frame">
                     <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <div class="file-upload">
+                                <label for="file-input">
+                                    <img src="/images/attach.png">
+                                </label>
+                                <input id="file-input" type="file" accept="image/*" name="image">
+                            </div>
+                        </div>
                         <input
                             id="msg"
                             type="text"
@@ -160,13 +168,6 @@
                             required
                         />
                         <div class="input-group-append">
-                            <div class="file-upload">
-                                <label for="file-input">
-                                    <img src="/attach.png">
-                                </label>
-                                <input id="file-input" type="file" accept="image/*" multiple>
-                            </div>
-
                             <button
                                 class="btn btn-outline-secondary send-btn"
                                 type="submit"
@@ -178,6 +179,9 @@
                 </form>
             </div>
         </div>
+
+        <!-- so post request dosent reload page| -->
+        <iframe name="frame"></iframe>
 
         <script src="/socket.io/socket.io.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

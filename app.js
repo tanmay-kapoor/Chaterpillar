@@ -18,6 +18,9 @@ const { v4: uuidv4 } = require("uuid");
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const moment = require("moment-timezone");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
 const app = express();
 const server = http.createServer(app);
@@ -28,11 +31,11 @@ const MONGODB_URI =
     process.env.MONGODB_URI || "mongodb://localhost:27017/chatDB";
 const botName = "Admin";
 
-const User = require("./utils/schemas/user_schema.js");
-const Room = require("./utils/schemas/room_schema.js");
-const Message = require("./utils/schemas/message_schema.js");
-const Link = require("./utils/schemas/link_schema.js");
-const Activeuser = require("./utils/schemas/activeuser_schema.js");
+const User = require("./utils/schemas/user_schema");
+const Room = require("./utils/schemas/room_schema");
+const Message = require("./utils/schemas/message_schema");
+const Link = require("./utils/schemas/link_schema");
+const Activeuser = require("./utils/schemas/activeuser_schema");
 
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
@@ -43,7 +46,8 @@ initialisePassport(passport);
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
+
 app.use(flash());
 app.use(
     session({
@@ -54,6 +58,18 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
+const storage = multer.diskStorage({
+    destination: "./public/uploads/",
+    filename: function (req, file, cb) {
+        cb(
+            null,
+            file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+        );
+    },
+});
+
+const upload = multer({ storage: storage }).single("image");
 
 let created, failure, msg, wrong;
 let username, room;
@@ -90,18 +106,23 @@ io.on("connection", async (socket) => {
             io.to(user.room).emit("message", msg);
         });
 
-        socket.on("base64 file", async (msg) => {
-            // console.log("received base64 file from " + msg.username);
+        socket.on("image", async () => {
+            const images = await Message.find({
+                username: user.username,
+                room: user.room,
+                type: "image",
+            });
+            const image = images[images.length - 1];
+            io.to(user.room).emit("image", image);
+            // msg.name = user.name;
+            // msg.time = moment().tz("Asia/Kolkata").format("h:mm a");
+            // msg.date = moment().format("DD-MMM-YYYY");
+            // msg.type = "image";
+            // msg.room = user.room;
 
-            msg.name = user.name;
-            msg.time = moment().tz("Asia/Kolkata").format("h:mm a");
-            msg.date = moment().format("DD-MMM-YYYY");
-            msg.type = "base64 file";
-            msg.room = user.room;
-
-            const newFile = new Message(msg);
-            newFile.save();
-            io.to(user.room).emit("base64 file", msg);
+            // const newFile = new Message(msg);
+            // newFile.save();
+            // io.to(user.room).emit("image", msg);
         });
 
         socket.on("typing", async () => {
@@ -131,6 +152,12 @@ io.on("connection", async (socket) => {
             Message.deleteOne(details, (err, result) => {
                 if (!err) {
                     io.to(user.room).emit("deleteFile", details);
+
+                    fs.unlink("./public/uploads/" + details.filename, (err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
                 } else {
                     console.log(err);
                 }
@@ -411,7 +438,6 @@ app.get("/:username/rooms/:room", checkAuthenticated, async (req, res) => {
     if (req.params.username !== req.user.username) {
         checkNotAuthenticated(req, res);
     } else {
-        // if (await singleInstance(req.user.username)) {
         Room.findOne(
             { name: { $regex: new RegExp(req.params.room, "i") } },
             (err, room) => {
@@ -438,10 +464,38 @@ app.get("/:username/rooms/:room", checkAuthenticated, async (req, res) => {
                 }
             }
         );
-        // } else {
-        //     res.render("err");
-        // }
     }
+});
+
+app.post("/upload", checkAuthenticated, async (req, res) => {
+    const activeUser = await Activeuser.findOne({
+        username: req.user.username,
+    });
+
+    const details = {
+        username: activeUser.username,
+        name: activeUser.name,
+        type: "image",
+        room: activeUser.room,
+        time: moment().tz("Asia/Kolkata").format("h:mm a"),
+        date: moment().format("DD-MMM-YYYY"),
+    };
+
+    upload(req, res, (err) => {
+        if (!err) {
+            details.filename = req.file.filename;
+            details.path = "\\" + req.file.path.substring(7);
+
+            const image = new Message(details);
+            image.save((err) => {
+                if (err) {
+                    console.log(err);
+                }
+            });
+        } else {
+            console.log(err);
+        }
+    });
 });
 
 app.post("/logout", checkAuthenticated, (req, res) => {
@@ -462,13 +516,5 @@ function checkNotAuthenticated(req, res, next) {
     }
     next();
 }
-
-// async function singleInstance(username) {
-//     const userIsActive = await Activeuser.findOne({ username });
-//     if (userIsActive) {
-//         return false;
-//     }
-//     return true;
-// }
 
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));

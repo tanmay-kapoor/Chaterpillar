@@ -8,8 +8,8 @@ const messageSchema = new mongoose.Schema({
     room: String,
     date: String,
     type: String,
-    file: Buffer,
-    fileName: String,
+    path: String,
+    filename: String,
 });
 
 module.exports = new mongoose.model("Message", messageSchema);

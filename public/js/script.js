@@ -19,12 +19,10 @@ socket.on("message", (msg) => {
     }
 });
 
-socket.on("base64 file", (msg) => {
+socket.on("image", (msg) => {
     // console.log(msg);
     outputFile(msg);
-
-    // scrollTop();             not working for 1st 2 images idk why
-    setTimeout(scrollTop, 0);
+    setTimeout(scrollTop, 10); // not sure, maybe because whole image not loaded instantly
 });
 
 socket.on("deleteTypingMsg", () => {
@@ -54,13 +52,10 @@ socket.on("deleteFile", (details) => {
 
         // if img tag exists only then deal with msg else skip
         if (children[1].children[0]) {
-            const fileName = children[1].children[0].alt;
+            const filename = children[1].children[0].alt;
 
-            if (fileName === details.fileName) {
-                const time = children[0].children[1].innerText;
-                if (time === details.time) {
-                    chatMessage.remove();
-                }
+            if (filename === details.filename) {
+                chatMessage.remove();
             }
         }
     });
@@ -153,35 +148,17 @@ function outputMessage(msg) {
     });
 }
 
-$("#file-input").bind("change", function (e) {
-    // const data = e.originalEvent.target.files[0];
-    // readThenSendFile(data);
-    const files = document.getElementById("file-input").files;
-
-    //forEach gives error idk why
-    for (let i = 0; i < files.length; i++) {
-        readThenSendFile(files[i]);
-    }
+document.getElementById("file-input").onchange = function (e) {
+    this.form.submit();
+    setTimeout(() => socket.emit("image"), 50);
     $("#file-input").prop("value", ""); // to allow same file to be selected again
-});
-
-function readThenSendFile(data) {
-    var reader = new FileReader();
-    reader.onload = function (evt) {
-        var msg = {};
-        msg.username = usernameFromURL;
-        msg.file = evt.target.result;
-        msg.fileName = data.name;
-        socket.emit("base64 file", msg);
-    };
-    reader.readAsDataURL(data);
-}
+};
 
 function outputFile(msg) {
     const div = document.createElement("div");
     div.classList.add("message");
     div.innerHTML = `<p class="meta"><span name=${msg.username} class="name">${msg.name}</span> <span>${msg.time}</span></p>
-    <p class="text"><img src="${msg.file}" alt="${msg.fileName}"></p>`;
+    <p class="text"><img src="${msg.path}" alt="${msg.filename}"></p>`;
     div.classList.add("file-div", "sender");
 
     chatMessages.appendChild(div);
@@ -196,9 +173,10 @@ function outputFile(msg) {
         const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
         const img = parent.parent().children().children()[3];
 
+        console.log(img);
+
         const details = {
-            file: img.src,
-            fileName: img.alt,
+            filename: img.alt,
             username: parent[0].innerHTML.trim().substring(12, lastIndex),
             name: parent.children()[0].innerHTML,
             time: parent.children()[1].innerHTML,
@@ -215,8 +193,7 @@ $(".delete-btn-file").click(function () {
     const img = parent.parent().children().children()[3];
 
     const details = {
-        file: img.src,
-        fileName: img.alt,
+        filename: img.alt,
         username: parent[0].innerHTML.trim().substring(12, lastIndex),
         name: parent.children()[0].innerHTML,
         time: parent.children()[1].innerHTML,
