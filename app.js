@@ -47,7 +47,6 @@ initialisePassport(passport);
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: false }));
-
 app.use(flash());
 app.use(
     session({
@@ -114,15 +113,6 @@ io.on("connection", async (socket) => {
             });
             const image = images[images.length - 1];
             io.to(user.room).emit("image", image);
-            // msg.name = user.name;
-            // msg.time = moment().tz("Asia/Kolkata").format("h:mm a");
-            // msg.date = moment().format("DD-MMM-YYYY");
-            // msg.type = "image";
-            // msg.room = user.room;
-
-            // const newFile = new Message(msg);
-            // newFile.save();
-            // io.to(user.room).emit("image", msg);
         });
 
         socket.on("typing", async () => {
