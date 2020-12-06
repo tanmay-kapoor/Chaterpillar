@@ -148,9 +148,16 @@ function outputMessage(msg) {
     });
 }
 
+socket.on("temp", (file) => {
+    socket.emit("image", file); // re emit hoping that file has been uploaded
+});
+
 document.getElementById("file-input").onchange = function (e) {
     this.form.submit();
-    setTimeout(() => socket.emit("image"), 50);
+    const file = {
+        originalname: this.files[0].name,
+    };
+    setTimeout(() => socket.emit("image", file), 20); // file uploading takes a lil time and this might emit before uploading so small delay
     $("#file-input").prop("value", ""); // to allow same file to be selected again
 };
 
@@ -172,8 +179,6 @@ function outputFile(msg) {
         const parent = $(this).parent();
         const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
         const img = parent.parent().children().children()[3];
-
-        console.log(img);
 
         const details = {
             filename: img.alt,

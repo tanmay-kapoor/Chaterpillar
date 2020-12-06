@@ -105,14 +105,19 @@ io.on("connection", async (socket) => {
             io.to(user.room).emit("message", msg);
         });
 
-        socket.on("image", async () => {
+        socket.on("image", async (file) => {
             const images = await Message.find({
                 username: user.username,
                 room: user.room,
                 type: "image",
             });
             const image = images[images.length - 1];
-            io.to(user.room).emit("image", image);
+
+            if (!image || image.originalname !== file.originalname) {
+                socket.emit("temp", file); // file uploading may not have finished if the image is large in size
+            } else {
+                io.to(user.room).emit("image", image);
+            }
         });
 
         socket.on("typing", async () => {
@@ -474,6 +479,7 @@ app.post("/upload", checkAuthenticated, async (req, res) => {
     upload(req, res, (err) => {
         if (!err) {
             details.filename = req.file.filename;
+            details.originalname = req.file.originalname;
             details.path = "\\" + req.file.path.substring(7);
 
             const image = new Message(details);

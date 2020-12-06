@@ -10,6 +10,7 @@ const messageSchema = new mongoose.Schema({
     type: String,
     path: String,
     filename: String,
+    originalname: String,
 });
 
 module.exports = new mongoose.model("Message", messageSchema);
