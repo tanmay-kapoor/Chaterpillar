@@ -308,7 +308,11 @@ app.get("/reset/:uuid", checkNotAuthenticated, (req, res) => {
             if (record) {
                 res.render("reset", { uuid });
             } else {
-                res.send("Invalid url");
+                res.render("err", {
+                    title: "URL Expired!",
+                    msg:
+                        "You have used this url to reset your password once and cannot be used again.",
+                });
             }
         } else {
             console.log(err);
@@ -512,5 +516,13 @@ function checkNotAuthenticated(req, res, next) {
     }
     next();
 }
+
+app.use((req, res) => {
+    res.status(400);
+    res.render("err", {
+        title: "Oops!",
+        msg: "This path doesn't exist!",
+    });
+});
 
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
