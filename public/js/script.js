@@ -166,13 +166,17 @@ function outputFile(msg) {
     div.classList.add("message");
     div.innerHTML = `<p class="meta"><span name=${msg.username} class="name">${msg.name}</span> <span>${msg.time}</span></p>
     <p class="text"><img src="${msg.path}" alt="${msg.filename}"></p>`;
-    div.classList.add("file-div", "sender");
+    div.classList.add("file-div");
+
+    if (msg.username === usernameFromURL) {
+        div.classList.add("sender");
+        const btn = document.createElement("button");
+        btn.classList.add("btn", "btn-sm", "btn-info", "delete-btn-file");
+        btn.innerHTML = "Delete";
+        div.childNodes[0].appendChild(btn);
+    }
 
     chatMessages.appendChild(div);
-    const btn = document.createElement("button");
-    btn.classList.add("btn", "btn-sm", "btn-info", "delete-btn-file");
-    btn.innerHTML = "Delete";
-    div.childNodes[0].appendChild(btn);
 
     $(".delete-btn-file").unbind();
     $(".delete-btn-file").click(function () {
