@@ -90,18 +90,16 @@ io.on("connection", async (socket) => {
             io.to(user.room).emit("message", msg);
         });
 
-        socket.on("base64 file", async (msg) => {
-            // console.log("received base64 file from " + msg.username);
-
+        socket.on("image", async (msg) => {
             msg.name = user.name;
             msg.time = moment().tz("Asia/Kolkata").format("h:mm a");
             msg.date = moment().format("DD-MMM-YYYY");
-            msg.type = "base64 file";
+            msg.type = "image";
             msg.room = user.room;
 
             const newFile = new Message(msg);
             newFile.save();
-            io.to(user.room).emit("base64 file", msg);
+            io.to(user.room).emit("image", msg);
         });
 
         socket.on("typing", async () => {
@@ -286,7 +284,11 @@ app.get("/reset/:uuid", checkNotAuthenticated, (req, res) => {
             if (record) {
                 res.render("reset", { uuid });
             } else {
-                res.send("Invalid url");
+                res.render("err", {
+                    title: "URL expired!",
+                    msg:
+                        "You have used this link to reset your password once and cannot use it again.",
+                });
             }
         } else {
             console.log(err);
@@ -411,7 +413,6 @@ app.get("/:username/rooms/:room", checkAuthenticated, async (req, res) => {
     if (req.params.username !== req.user.username) {
         checkNotAuthenticated(req, res);
     } else {
-        // if (await singleInstance(req.user.username)) {
         Room.findOne(
             { name: { $regex: new RegExp(req.params.room, "i") } },
             (err, room) => {
@@ -438,9 +439,6 @@ app.get("/:username/rooms/:room", checkAuthenticated, async (req, res) => {
                 }
             }
         );
-        // } else {
-        //     res.render("err");
-        // }
     }
 });
 
@@ -463,12 +461,9 @@ function checkNotAuthenticated(req, res, next) {
     next();
 }
 
-// async function singleInstance(username) {
-//     const userIsActive = await Activeuser.findOne({ username });
-//     if (userIsActive) {
-//         return false;
-//     }
-//     return true;
-// }
+app.use((req, res) => {
+    res.status(400);
+    res.render("err", { title: "404", msg: "URL not found!" });
+});
 
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));

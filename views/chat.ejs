@@ -151,6 +151,15 @@
             <div class="chat-form-container">
                 <form id="chat-form">
                     <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <div class="file-upload">
+                                <label for="file-input">
+                                    <img src="/attach.png">
+                                </label>
+                                <input id="file-input" type="file" accept="image/*" multiple>
+                            </div> 
+                        </div>
+
                         <input
                             id="msg"
                             type="text"
@@ -159,14 +168,8 @@
                             autocomplete="off"
                             required
                         />
-                        <div class="input-group-append">
-                            <div class="file-upload">
-                                <label for="file-input">
-                                    <img src="/attach.png">
-                                </label>
-                                <input id="file-input" type="file" accept="image/*" multiple>
-                            </div>
 
+                        <div class="input-group-append">
                             <button
                                 class="btn btn-outline-secondary send-btn"
                                 type="submit"

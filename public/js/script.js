@@ -19,7 +19,7 @@ socket.on("message", (msg) => {
     }
 });
 
-socket.on("base64 file", (msg) => {
+socket.on("image", (msg) => {
     // console.log(msg);
     outputFile(msg);
 
@@ -172,7 +172,7 @@ function readThenSendFile(data) {
         msg.username = usernameFromURL;
         msg.file = evt.target.result;
         msg.fileName = data.name;
-        socket.emit("base64 file", msg);
+        socket.emit("image", msg);
     };
     reader.readAsDataURL(data);
 }

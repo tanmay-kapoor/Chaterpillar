@@ -37,13 +37,19 @@
 
         <div class="form">
             <div class="form-header">
-                <h1>Oops!</h1>
+                <h1><%= title %>!</h1>
             </div>
 
-            <p>
-                You have joined a room through another tab. Please make sure you
-                use only 1 tab to use Chaterpillar!
-            </p>
+            <div style="text-align: center">
+                <p><%= msg %></p>
+                <a
+                    href="/"
+                    class="btn btn-outline-light btn-lg btn-block"
+                    style="margin: 30px auto 0; width: 75%"
+                >
+                    Home
+                </a>
+            </div>
         </div>
     </body>
 </html>
