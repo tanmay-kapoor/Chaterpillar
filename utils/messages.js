@@ -1,4 +1,5 @@
 require("dotenv").config();
+const { tz } = require("moment-timezone");
 const moment = require("moment-timezone");
 const mongoose = require("mongoose");
 const Message = require("./schemas/message_schema.js");
@@ -17,7 +18,7 @@ async function formatMessage(username, text, room) {
         name: "Admin",
         text,
         time: moment().tz("Asia/Kolkata").format("h:mm a"),
-        date: moment().format("DD-MMM-YYYY"),
+        date: moment().tz("Asia/Kolkata").format("DD-MMM-YYYY"),
         type: "text",
     };
 
