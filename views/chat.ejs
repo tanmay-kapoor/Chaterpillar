@@ -54,9 +54,9 @@
 
                     <% for(let i = 1; i<messages.length; i++) { %>
                         <% if(messages[i-1].type === "text") { %>
-                            <div class="message not-bot">
+                            <div id="<%= messages[i-1].timestamp %>" class="message not-bot">
                         <% } else { %>
-                            <div class="message file-div">
+                            <div id="<%= messages[i-1].timestamp %>" class="message file-div">
                         <% } %>
                             <p class="meta">
                                 <span name="<%= messages[i-1].username %>" class="name"
@@ -82,9 +82,9 @@
                         
                     <% if(messages.length !== 0) { %>
                         <% if(messages[messages.length-1].type==="text") { %>
-                            <div class="message not-bot">
+                            <div id="<%= messages[messages.length-1].timestamp %>" class="message not-bot">
                         <% } else { %>
-                            <div class="message file-div">
+                            <div id="<%= messages[messages.length-1].timestamp %>" class="message file-div">
                         <% } %>
                             <p class="meta">
                                 <span

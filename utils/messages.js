@@ -26,6 +26,7 @@ async function formatMessage(username, text, room) {
         let temp = details;
         temp.room = room;
         temp.name = record.name;
+        temp.timestamp = Date.now();
 
         if (text !== "") {
             const message = new Message(temp);

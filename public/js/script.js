@@ -34,35 +34,16 @@ socket.on("deleteTypingMsg", () => {
 });
 
 socket.on("deleteMessage", (details) => {
-    document.getElementsByName(details.username).forEach((msg) => {
+    const messages = Array.from(document.getElementsByName(details.username));
+
+    messages.every((msg) => {
         const chatMessage = msg.parentNode.parentNode;
-        const children = chatMessage.children;
-        const text = children[1].innerText;
-        if (text === details.text) {
-            const time = children[0].children[1].innerText;
-            if (time === details.time) {
-                chatMessage.remove();
-            }
+
+        if (chatMessage.id === details.timestamp) {
+            chatMessage.remove();
+            return false;
         }
-    });
-});
-
-socket.on("deleteFile", (details) => {
-    document.getElementsByName(details.username).forEach((msg) => {
-        const chatMessage = msg.parentNode.parentNode;
-        const children = chatMessage.children;
-
-        // if img tag exists only then deal with msg else skip
-        if (children[1].children[0]) {
-            const fileName = children[1].children[0].alt;
-
-            if (fileName === details.fileName) {
-                const time = children[0].children[1].innerText;
-                if (time === details.time) {
-                    chatMessage.remove();
-                }
-            }
-        }
+        return true;
     });
 });
 
@@ -118,6 +99,7 @@ function outputMessage(msg) {
     <p class="text">${msg.text}</p>`;
 
     if (msg.name !== "Admin") {
+        div.setAttribute("id", msg.timestamp);
         div.classList.add("not-bot");
 
         if (msg.id === socket.id) {
@@ -138,18 +120,12 @@ function outputMessage(msg) {
     $(".delete-btn").unbind();
     $(".delete-btn").click(function () {
         const parent = $(this).parent();
-        const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
+        const line = parent[0].innerHTML.trim();
+        const lastIndex = line.indexOf('"', 12);
 
-        const bigMsg = parent.parent()[0].innerHTML.trim();
-        const start = bigMsg.lastIndexOf('"') + 2;
-        const end = bigMsg.lastIndexOf("<");
-
-        let text = bigMsg.substring(start, end).trim();
-        let username = parent[0].innerHTML.trim().substring(12, lastIndex);
-        let name = parent.children()[0].innerHTML;
-        let time = parent.children()[1].innerHTML;
-
-        socket.emit("deleteMessage", { username, time, text, room });
+        const username = line.substring(12, lastIndex);
+        const timestamp = parent.parent()[0].id;
+        socket.emit("deleteMessage", { username, room, timestamp });
     });
 }
 
@@ -179,6 +155,7 @@ function readThenSendFile(data) {
 
 function outputFile(msg) {
     const div = document.createElement("div");
+    div.setAttribute("id", msg.timestamp);
     div.classList.add("message");
     div.innerHTML = `<p class="meta"><span name=${msg.username} class="name">${msg.name}</span> <span>${msg.time}</span></p>
     <p class="text"><img src="${msg.file}" alt="${msg.fileName}"></p>`;
@@ -187,44 +164,21 @@ function outputFile(msg) {
     if (msg.username === usernameFromURL) {
         div.classList.add("sender");
         const btn = document.createElement("button");
-        btn.classList.add("btn", "btn-sm", "btn-info", "delete-btn-file");
+        btn.classList.add("btn", "btn-sm", "btn-info", "delete-btn");
         btn.innerHTML = "Delete";
         div.childNodes[0].appendChild(btn);
     }
 
     chatMessages.appendChild(div);
 
-    $(".delete-btn-file").unbind();
-    $(".delete-btn-file").click(function () {
+    $(".delete-btn").unbind();
+    $(".delete-btn").click(function () {
         const parent = $(this).parent();
-        const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
-        const img = parent.parent().children().children()[3];
+        const line = parent[0].innerHTML.trim();
+        const lastIndex = line.indexOf('"', 12);
 
-        const details = {
-            file: img.src,
-            fileName: img.alt,
-            username: parent[0].innerHTML.trim().substring(12, lastIndex),
-            name: parent.children()[0].innerHTML,
-            time: parent.children()[1].innerHTML,
-        };
-
-        socket.emit("deleteFile", details);
+        const username = line.substring(12, lastIndex);
+        const timestamp = parent.parent()[0].id;
+        socket.emit("deleteMessage", { username, timestamp });
     });
 }
-
-$(".delete-btn-file").unbind();
-$(".delete-btn-file").click(function () {
-    const parent = $(this).parent();
-    const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
-    const img = parent.parent().children().children()[3];
-
-    const details = {
-        file: img.src,
-        fileName: img.alt,
-        username: parent[0].innerHTML.trim().substring(12, lastIndex),
-        name: parent.children()[0].innerHTML,
-        time: parent.children()[1].innerHTML,
-    };
-
-    socket.emit("deleteFile", details);
-});

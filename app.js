@@ -96,6 +96,7 @@ io.on("connection", async (socket) => {
             msg.date = moment().format("DD-MMM-YYYY");
             msg.type = "image";
             msg.room = user.room;
+            msg.timestamp = Date.now();
 
             const newFile = new Message(msg);
             newFile.save();
@@ -119,16 +120,6 @@ io.on("connection", async (socket) => {
             Message.deleteOne(details, (err, result) => {
                 if (!err) {
                     io.to(user.room).emit("deleteMessage", details);
-                } else {
-                    console.log(err);
-                }
-            });
-        });
-
-        socket.on("deleteFile", (details) => {
-            Message.deleteOne(details, (err, result) => {
-                if (!err) {
-                    io.to(user.room).emit("deleteFile", details);
                 } else {
                     console.log(err);
                 }
