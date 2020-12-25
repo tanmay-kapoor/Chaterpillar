@@ -32,16 +32,16 @@ socket.on("deleteTypingMsg", () => {
 });
 
 socket.on("deleteMessage", (details) => {
-    document.getElementsByName(details.username).forEach((msg) => {
+    const messages = Array.from(document.getElementsByName(details.username));
+
+    messages.every((msg) => {
         const chatMessage = msg.parentNode.parentNode;
-        const children = chatMessage.children;
-        const text = children[1].innerText;
-        if (text === details.text) {
-            const time = children[0].children[1].innerText;
-            if (time === details.time) {
-                chatMessage.remove();
-            }
+
+        if (chatMessage.id === details.timestamp) {
+            chatMessage.remove();
+            return false;
         }
+        return true;
     });
 });
 
@@ -113,6 +113,7 @@ function outputMessage(msg) {
     <p class="text">${msg.text}</p>`;
 
     if (msg.name !== "Admin") {
+        div.setAttribute("id", msg.timestamp);
         div.classList.add("not-bot");
 
         if (msg.id === socket.id) {
@@ -135,16 +136,10 @@ function outputMessage(msg) {
         const parent = $(this).parent();
         const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
 
-        const bigMsg = parent.parent()[0].innerHTML.trim();
-        const start = bigMsg.lastIndexOf('"') + 2;
-        const end = bigMsg.lastIndexOf("<");
+        const username = parent[0].innerHTML.trim().substring(12, lastIndex);
+        const timestamp = parent.parent()[0].id;
 
-        let text = bigMsg.substring(start, end).trim();
-        let username = parent[0].innerHTML.trim().substring(12, lastIndex);
-        let name = parent.children()[0].innerHTML;
-        let time = parent.children()[1].innerHTML;
-
-        socket.emit("deleteMessage", { username, time, text, room });
+        socket.emit("deleteMessage", { username, room, timestamp });
     });
 }
 
@@ -163,7 +158,9 @@ document.getElementById("file-input").onchange = function (e) {
 
 function outputFile(msg) {
     const div = document.createElement("div");
+    div.setAttribute("id", msg.timestamp);
     div.classList.add("message");
+
     div.innerHTML = `<p class="meta"><span name=${msg.username} class="name">${msg.name}</span> <span>${msg.time}</span></p>
     <p class="text"><img src="${msg.path}" alt="${msg.filename}"></p>`;
     div.classList.add("file-div");
@@ -171,42 +168,23 @@ function outputFile(msg) {
     if (msg.username === usernameFromURL) {
         div.classList.add("sender");
         const btn = document.createElement("button");
-        btn.classList.add("btn", "btn-sm", "btn-info", "delete-btn-file");
+        btn.classList.add("btn", "btn-sm", "btn-info", "delete-btn");
         btn.innerHTML = "Delete";
         div.childNodes[0].appendChild(btn);
     }
 
     chatMessages.appendChild(div);
 
-    $(".delete-btn-file").unbind();
-    $(".delete-btn-file").click(function () {
+    $(".delete-btn").unbind();
+    $(".delete-btn").click(function () {
         const parent = $(this).parent();
         const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
         const img = parent.parent().children().children()[3];
 
-        const details = {
-            filename: img.alt,
-            username: parent[0].innerHTML.trim().substring(12, lastIndex),
-            name: parent.children()[0].innerHTML,
-            time: parent.children()[1].innerHTML,
-        };
+        const username = parent[0].innerHTML.trim().substring(12, lastIndex);
+        const filename = img.alt;
+        const timestamp = parent.parent()[0].id;
 
-        socket.emit("deleteFile", details);
+        socket.emit("deleteFile", { username, room, filename, timestamp });
     });
 }
-
-$(".delete-btn-file").unbind();
-$(".delete-btn-file").click(function () {
-    const parent = $(this).parent();
-    const lastIndex = parent[0].innerHTML.trim().indexOf('"', 12);
-    const img = parent.parent().children().children()[3];
-
-    const details = {
-        filename: img.alt,
-        username: parent[0].innerHTML.trim().substring(12, lastIndex),
-        name: parent.children()[0].innerHTML,
-        time: parent.children()[1].innerHTML,
-    };
-
-    socket.emit("deleteFile", details);
-});

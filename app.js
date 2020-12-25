@@ -146,13 +146,14 @@ io.on("connection", async (socket) => {
         socket.on("deleteFile", (details) => {
             Message.deleteOne(details, (err, result) => {
                 if (!err) {
-                    io.to(user.room).emit("deleteFile", details);
-
+                    console.log(details);
                     fs.unlink("./public/uploads/" + details.filename, (err) => {
                         if (err) {
                             console.log(err);
                         }
                     });
+
+                    io.to(user.room).emit("deleteMessage", details);
                 } else {
                     console.log(err);
                 }
@@ -477,7 +478,7 @@ app.post("/upload", checkAuthenticated, async (req, res) => {
         type: "image",
         room: activeUser.room,
         time: moment().tz("Asia/Kolkata").format("h:mm a"),
-        date: moment().format("DD-MMM-YYYY"),
+        date: moment().tz("Asia/Kolkata").format("DD-MMM-YYYY"),
     };
 
     upload(req, res, (err) => {
@@ -485,6 +486,7 @@ app.post("/upload", checkAuthenticated, async (req, res) => {
             details.filename = req.file.filename;
             details.originalname = req.file.originalname;
             details.path = "\\" + req.file.path.substring(7);
+            details.timestamp = Date.now();
 
             const image = new Message(details);
             image.save((err) => {

@@ -11,6 +11,7 @@ const messageSchema = new mongoose.Schema({
     path: String,
     filename: String,
     originalname: String,
+    timestamp: Number,
 });
 
 module.exports = new mongoose.model("Message", messageSchema);

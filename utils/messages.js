@@ -17,7 +17,7 @@ async function formatMessage(username, text, room) {
         name: "Admin",
         text,
         time: moment().tz("Asia/Kolkata").format("h:mm a"),
-        date: moment().format("DD-MMM-YYYY"),
+        date: moment().tz("Asia/Kolkata").format("DD-MMM-YYYY"),
         type: "text",
     };
 
@@ -26,6 +26,7 @@ async function formatMessage(username, text, room) {
         let temp = details;
         temp.room = room;
         temp.name = record.name;
+        temp.timestamp = Date.now();
 
         if (text !== "") {
             const message = new Message(temp);
