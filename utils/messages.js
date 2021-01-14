@@ -15,14 +15,14 @@ mongoose.connect(MONGODB_URI, {
 async function formatMessage(username, text, room) {
     const details = {
         username,
-        name: "Admin",
+        name: "ChaterBOT",
         text,
         time: moment().tz("Asia/Kolkata").format("h:mm a"),
         date: moment().tz("Asia/Kolkata").format("DD-MMM-YYYY"),
         type: "text",
     };
 
-    if (username !== "Admin") {
+    if (username !== "ChaterBOT") {
         const record = await User.findOne({ username });
         let temp = details;
         temp.room = room;

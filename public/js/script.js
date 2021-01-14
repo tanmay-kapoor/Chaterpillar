@@ -98,7 +98,7 @@ function outputMessage(msg) {
     div.innerHTML = `<p class="meta"><span name=${msg.username} class="name">${msg.name}</span> <span>${msg.time}</span></p>
     <p class="text">${msg.text}</p>`;
 
-    if (msg.name !== "Admin") {
+    if (msg.name !== "ChaterBOT") {
         div.setAttribute("id", msg.timestamp);
         div.classList.add("not-bot");
 

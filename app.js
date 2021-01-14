@@ -26,7 +26,7 @@ const io = socketio(server);
 const PORT = process.env.PORT || 3000;
 const MONGODB_URI =
     process.env.MONGODB_URI || "mongodb://localhost:27017/chatDB";
-const botName = "Admin";
+const botName = "ChaterBOT";
 
 const User = require("./utils/schemas/user_schema.js");
 const Room = require("./utils/schemas/room_schema.js");
@@ -185,9 +185,9 @@ app.post("/signup", checkNotAuthenticated, (req, res) => {
                     msg = "Email/username is registered already";
                     res.redirect("/signup");
                 } else {
-                    if (username.toLowerCase() === "admin") {
+                    if (username.toLowerCase() === "ChaterBOT") {
                         failure = true;
-                        msg = "username can't be admin";
+                        msg = "username can't be ChaterBOT";
                         res.redirect("/signup");
                     } else {
                         bcrypt.hash(password, saltRounds, (err, hash) => {
